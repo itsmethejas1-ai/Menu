@@ -1,0 +1,15 @@
+/* Scroll reveals and image fallback styles */
+html { scroll-behavior: smooth; scroll-padding-top: 20px; }
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-reveal { opacity: 0; transform: translateY(24px); transition: opacity 650ms ease, transform 650ms cubic-bezier(.2,.7,.2,1); }
+  .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .dish.scroll-reveal:nth-child(3n + 2) { transition-delay: 80ms; }
+  .dish.scroll-reveal:nth-child(3n) { transition-delay: 150ms; }
+}
+.food-photo { background: linear-gradient(135deg,#e9e2d3,#f6efe3); }
+.photo-placeholder { width:100%; min-height:165px; display:grid; place-items:center; gap:8px; padding:16px; border-radius:3px; background:linear-gradient(135deg,#e9e2d3,#f6efe3); color:#788276; text-align:center; font:12px 'DM Sans',Arial,sans-serif; }
+.photo-placeholder .food-icon { font-size:42px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
