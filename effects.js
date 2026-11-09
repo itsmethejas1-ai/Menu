@@ -1,49 +1,60 @@
 (() => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dishes = [
+    { match: 'biryani', icon: '🍛' },
+    { match: 'fries', icon: '🍟' },
+    { match: 'Classic beef', icon: '🍔' },
+    { match: 'Chicken burger', icon: '🍔' },
+    { match: 'Cheeseburger', icon: '🍔' },
+    { match: 'milkshake', icon: '🥤' },
+    { match: 'cupcake', icon: '🧁' }
+  ];
+  const dishIcon = (item) => dishes.find(({ match }) => item.toLowerCase().includes(match.toLowerCase()))?.icon || '🍽️';
 
-  // Use a second independent image host if the Pexels photo cannot load.
-  const alternates = {
-    biryani: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=80',
-    fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80',
-    beef: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
-    chicken: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80',
-    cheese: 'https://images.unsplash.com/photo-1553979459-d2229ba7433a?auto=format&fit=crop&w=900&q=80',
-    shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=80',
-    cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=80'
-  };
-  const icons = { biryani: '🍛', fries: '🍟', beef: '🍔', chicken: '🍔', cheese: '🍔', shake: '🥤', cupcake: '🧁' };
-
+  // Use emoji illustrations instead of remote photos so the menu works offline too.
   document.querySelectorAll('.food-photo').forEach((image) => {
-    image.addEventListener('error', () => {
-      if (!image.dataset.alternateTried) {
-        image.dataset.alternateTried = 'true';
-        const card = image.closest('.dish');
-        const item = card?.dataset.item || '';
-        const key = item.includes('biryani') ? 'biryani'
-          : item.includes('fries') ? 'fries'
-          : item.includes('Chicken') ? 'chicken'
-          : item.includes('Cheese') ? 'cheese'
-          : item.includes('milkshake') ? 'shake'
-          : item.includes('cupcake') ? 'cupcake' : 'beef';
-        image.src = alternates[key];
-        return;
-      }
-      const card = image.closest('.dish');
-      const item = card?.dataset.item || '';
-      const key = item.includes('biryani') ? 'biryani'
-        : item.includes('fries') ? 'fries'
-        : item.includes('Chicken') ? 'chicken'
-        : item.includes('Cheese') ? 'cheese'
-        : item.includes('milkshake') ? 'shake'
-        : item.includes('cupcake') ? 'cupcake' : 'beef';
-      const placeholder = document.createElement('span');
-      placeholder.className = 'photo-placeholder';
-      placeholder.setAttribute('role', 'img');
-      placeholder.setAttribute('aria-label', image.alt || `${item} photo`);
-      placeholder.innerHTML = `<span class="food-icon" aria-hidden="true">${icons[key]}</span><span>${image.alt || item}</span>`;
-      image.replaceWith(placeholder);
-    });
+    const card = image.closest('.dish');
+    const illustration = document.createElement('span');
+    illustration.className = 'food-illustration';
+    illustration.setAttribute('role', 'img');
+    illustration.setAttribute('aria-label', image.alt || card?.dataset.item || 'Food illustration');
+    illustration.innerHTML = `<span class="food-emoji" aria-hidden="true">${dishIcon(card?.dataset.item || '')}</span>`;
+    image.replaceWith(illustration);
   });
+
+  document.querySelectorAll('.hero-art img').forEach((image) => {
+    const alt = image.alt.toLowerCase();
+    const icon = alt.includes('rice') || alt.includes('biryani') ? '🍛'
+      : alt.includes('fries') ? '🍟'
+      : alt.includes('burger') ? '🍔' : '🧁';
+    const illustration = document.createElement('span');
+    illustration.className = 'hero-food-emoji';
+    illustration.setAttribute('role', 'img');
+    illustration.setAttribute('aria-label', image.alt || 'Food illustration');
+    illustration.textContent = icon;
+    image.replaceWith(illustration);
+  });
+
+  if (!reducedMotion) {
+    const hero = document.querySelector('.hero');
+    const heroText = hero?.querySelector(':scope > div:first-child');
+    const heroArt = hero?.querySelector('.hero-art');
+    let scheduled = false;
+    const updateHeroParallax = () => {
+      scheduled = false;
+      if (!hero || !heroText || !heroArt) return;
+      const progress = Math.max(0, Math.min(1, window.scrollY / Math.max(hero.offsetHeight, 1)));
+      const shift = `${-Math.round(progress * 70)}px`;
+      heroText.style.setProperty('--hero-shift', shift);
+      heroArt.style.setProperty('--hero-shift', `${-Math.round(progress * 105)}px`);
+    };
+    window.addEventListener('scroll', () => {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(updateHeroParallax);
+    }, { passive: true });
+    updateHeroParallax();
+  }
 
   if (reducedMotion || !('IntersectionObserver' in window)) return;
   const revealTargets = document.querySelectorAll('.section-head, .dish, .order-section > div, .order-section form, footer');
