@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff8ed">
+  <meta name="description" content="Choose your favorites from the Juniper menu and send your order to the waiter.">
+  <title>Juniper — Menu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#top">juniper<span>.</span></a>
+    <nav aria-label="Main navigation"><a href="#menu">Menu</a><a href="#order">Your order <span id="cart-count">0</span></a><a class="outline" href="waiter.html">Waiter view ↗</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <div><p class="eyebrow">✳ GOOD FOOD · GOOD MOOD</p><h1>Pick a treat.<br><em>Hear the joy.</em></h1><p class="lead">Tap any dish and we’ll say something nice about your choice. Add your favorites to send an order to the waiter.</p><a class="button" href="#menu">See the menu ↓</a></div>
+      <div class="hero-art" aria-hidden="true"><span>🍛</span><span>🍟</span><span>🍔</span><span>🧁</span></div>
+    </section>
+    <section class="menu" id="menu">
+      <div class="section-head"><div><p class="eyebrow">MADE FOR YOUR CRAVINGS</p><h2>What sounds good?</h2></div><p>Tap an item to add it and hear a cheerful response.<br>Prices shown in USD.</p></div>
+      <div class="grid" id="menu-grid">
+        <button class="dish biryani" type="button" data-item="Chicken biryani" data-price="14" data-message="Biryani! That's a delicious choice for you. Enjoy those fragrant spices!"><span class="emoji" aria-hidden="true">🍛</span><span class="category">CHEF'S FAVORITE</span><strong>Chicken biryani</strong><span class="description">Aromatic basmati rice with warm spices</span><span class="dish-bottom"><b>$14</b><span class="tap-hint">Tap to choose ↗</span></span></button>
+        <button class="dish fries" type="button" data-item="French fries" data-price="5" data-message="French fries! Crispy, golden, and always a good idea. Great choice!"><span class="emoji" aria-hidden="true">🍟</span><span class="category">CRISPY & GOLDEN</span><strong>French fries</strong><span class="description">Hot, crispy fries with a pinch of salt</span><span class="dish-bottom"><b>$5</b><span class="tap-hint">Tap to choose ↗</span></span></button>
+        <button class="dish burger" type="button" data-item="Classic burger" data-price="12" data-message="A burger! Now that's a satisfying choice. Hope you're hungry!"><span class="emoji" aria-hidden="true">🍔</span><span class="category">THE CLASSIC</span><strong>Classic burger</strong><span class="description">Juicy patty, lettuce, tomato, and house sauce</span><span class="dish-bottom"><b>$12</b><span class="tap-hint">Tap to choose ↗</span></span></button>
+        <button class="dish shake" type="button" data-item="Oreo milkshake" data-price="7" data-message="Oreo milkshake! Creamy, chocolatey, and wonderful. Excellent choice!"><span class="emoji" aria-hidden="true">🥤</span><span class="category">SOMETHING COOL</span><strong>Oreo milkshake</strong><span class="description">Vanilla shake blended with chocolate cookies</span><span class="dish-bottom"><b>$7</b><span class="tap-hint">Tap to choose ↗</span></span></button>
+        <button class="dish cupcake" type="button" data-item="Chocolate cupcake" data-price="6" data-message="A cupcake! Wow, nice choice of dessert. Save a little room for that frosting!"><span class="emoji" aria-hidden="true">🧁</span><span class="category">SOMETHING SWEET</span><strong>Chocolate cupcake</strong><span class="description">Rich chocolate cake with fluffy frosting</span><span class="dish-bottom"><b>$6</b><span class="tap-hint">Tap to choose ↗</span></span></button>
+      </div>
+      <p class="audio-note" id="audio-note" aria-live="polite">Audio plays when you choose an item. Use your device’s volume controls.</p>
+    </section>
+    <section class="order-section" id="order">
+      <div><p class="eyebrow">READY WHEN YOU ARE</p><h2>Your order</h2><p class="lead">Enter your name and table/order number, then send it to the waiter.</p></div>
+      <form id="order-form"><div class="fields"><label>Your name<input name="name" required maxlength="60" autocomplete="name" placeholder="e.g. Alex"></label><label>Table / order number<input name="number" required maxlength="20" placeholder="e.g. Table 4"></label></div><div class="cart" id="cart"><p class="empty-cart">Tap a menu item above to add it here.</p></div><div class="total"><span>Total</span><strong id="total">$0.00</strong></div><button class="button" type="submit">Send to the waiter ↗</button><p id="form-message" role="status" aria-live="polite"></p></form>
+    </section>
+  </main>
+  <footer><a class="logo" href="#top">juniper<span>.</span></a><span>Good food, shared often.</span><a href="waiter.html">Waiter dashboard ↗</a></footer>
+</body>
+</html>
