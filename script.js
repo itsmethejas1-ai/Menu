@@ -66,13 +66,13 @@ function renderCart() {
   totalNode.textContent = money(total);
 }
 
-// Real dish photography from Unsplash and Pexels, selected to match each item.
+// Real food photos for the dishes.
 const foodPhotos = {
   biryani: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=85',
   fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85',
   beefBurger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85',
   chickenBurger: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=85',
-  strawberries: 'https://images.pexels.com/photos/133578/pexels-photo-133578.jpeg?auto=compress&cs=tinysrgb&w=900',
+  strawberries: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=85',
   shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=85',
   cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=85'
 };
@@ -83,7 +83,7 @@ function photoForDish(dish) {
   if (dish.classList.contains('shake')) return foodPhotos.shake;
   if (dish.classList.contains('cupcake')) return foodPhotos.cupcake;
   if (dish.dataset.item === 'Chicken burger') return foodPhotos.chickenBurger;
-  if (dish.dataset.item === 'Chocolate covered strawberries') return foodPhotos.strawberries;
+  if (dish.dataset.item === 'Chocolate covered strawberry') return foodPhotos.strawberries;
   return foodPhotos.beefBurger;
 }
 
