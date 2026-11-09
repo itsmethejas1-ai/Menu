@@ -72,7 +72,7 @@ const foodPhotos = {
   fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85',
   beefBurger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85',
   chickenBurger: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=85',
-  cheeseburger: 'https://images.unsplash.com/photo-1553979459-d2229ba7433a?auto=format&fit=crop&w=900&q=85',
+  strawberries: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=85',
   shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=85',
   cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=85'
 };
@@ -83,7 +83,7 @@ function photoForDish(dish) {
   if (dish.classList.contains('shake')) return foodPhotos.shake;
   if (dish.classList.contains('cupcake')) return foodPhotos.cupcake;
   if (dish.dataset.item === 'Chicken burger') return foodPhotos.chickenBurger;
-  if (dish.dataset.item === 'Cheeseburger') return foodPhotos.cheeseburger;
+  if (dish.dataset.item === 'Chocolate covered strawberries') return foodPhotos.strawberries;
   return foodPhotos.beefBurger;
 }
 
