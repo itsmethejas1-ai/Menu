@@ -1,35 +1,45 @@
-/* Lively scroll reveals, matching emoji illustrations, and hero parallax */
+/* Photo-based menu styling and motion */
 html { scroll-behavior: smooth; scroll-padding-top: 20px; }
 @media (prefers-reduced-motion: no-preference) {
-  .hero > div:first-child { animation: hero-rise 900ms cubic-bezier(.16,1,.3,1) both; }
-  .hero-art { animation: hero-art-in 1100ms cubic-bezier(.16,1,.3,1) 120ms both; }
-  .hero > div:first-child, .hero-art { transform: translate3d(0, var(--hero-shift, 0px), 0); will-change: transform; }
-  .hero-art .hero-food-emoji { animation: emoji-float 3.2s ease-in-out infinite alternate; }
-  .hero-art .hero-food-emoji:nth-child(2n) { animation-delay: -1.6s; }
   .scroll-reveal { opacity: 0; transform: translateY(58px) scale(.96); transition: opacity 750ms ease, transform 850ms cubic-bezier(.16,1,.3,1); }
   .scroll-reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
   .dish.scroll-reveal:nth-child(3n + 2) { transition-delay: 100ms; }
   .dish.scroll-reveal:nth-child(3n) { transition-delay: 190ms; }
-  .dish:hover { transform: translateY(-12px) scale(1.025); box-shadow: 0 22px 45px #283b3128; transition: transform 280ms cubic-bezier(.2,.8,.2,1), box-shadow 280ms ease; }
-  .dish:active { transform: translateY(-3px) scale(.985); }
-  .dish:hover .food-emoji { animation: emoji-pop 550ms cubic-bezier(.2,.8,.2,1); }
-  .kitchen-video .video-frame { animation: video-glow 4s ease-in-out infinite alternate; }
+  .dish { transition: transform 260ms ease, box-shadow 260ms ease; }
+  .dish:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 22px 45px #283b3128; }
+  .hero-art img { animation: hero-image-in 900ms ease both; }
+  .hero-art img:nth-child(2n) { animation-delay: 150ms; }
+  .hero-art img:nth-child(3n) { animation-delay: 260ms; }
 }
-@keyframes hero-rise { from { opacity:0; transform:translateY(48px); } to { opacity:1; transform:translateY(var(--hero-shift, 0px)); } }
-@keyframes hero-art-in { from { opacity:0; transform:translateY(60px) scale(.94); } to { opacity:1; transform:translateY(var(--hero-shift, 0px)) scale(1); } }
-@keyframes emoji-float { from { translate:0 0; rotate:-3deg; } to { translate:0 -12px; rotate:3deg; } }
-@keyframes emoji-pop { 0%,100% { transform:scale(1) rotate(0); } 35% { transform:scale(1.3) rotate(-8deg); } 70% { transform:scale(.94) rotate(5deg); } }
-@keyframes video-glow { from { box-shadow:0 14px 35px #355a4320; } to { box-shadow:0 24px 60px #355a4350; } }
-.hero-art .hero-food-emoji { display:grid; place-items:center; min-width:0; min-height:0; overflow:hidden; background:linear-gradient(145deg,#f3ead9,#e8eddf); font-size:clamp(48px,7vw,86px); }
-.food-illustration { width:100%; height:165px; flex:none; display:flex; align-items:center; justify-content:center; gap:4px; overflow:hidden; border-radius:3px; background:linear-gradient(145deg,#f3ead9,#e8eddf); font-size:76px; }
-.food-illustration .food-emoji { display:block; filter:drop-shadow(0 8px 5px #283b3120); transition:transform 250ms ease; }
-@media(max-width:850px) { .food-illustration { height:155px; } }
-@media(max-width:600px) { .food-illustration { height:125px; font-size:58px; } }
+@keyframes hero-image-in { 0% { opacity: 0; transform: translateY(26px) scale(.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+.dish .food-photo {
+  display: block;
+  width: 100%;
+  height: 165px;
+  flex: none;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 3px;
+  background: linear-gradient(135deg,#e9e2d3,#f6efe3);
+}
+.hero-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#e9e2d3,#f6efe3);
+}
 .kitchen-video { max-width:1100px; margin:clamp(64px,10vw,120px) auto; padding:0 24px; }
 .kitchen-video .section-head { margin-bottom:24px; }
 .video-frame { position:relative; width:100%; aspect-ratio:16/9; overflow:hidden; border-radius:18px; background:#24372c; box-shadow:0 14px 35px #355a4320; }
 .video-frame iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
 .video-caption { margin:12px 0 0; color:var(--muted,#788276); font-size:.9rem; text-align:center; }
+@media (max-width:850px) { .dish .food-photo { height:155px; } }
+@media (max-width:600px) { .dish .food-photo { height:125px; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
