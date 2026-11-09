@@ -10,6 +10,30 @@ const money = (value) => `OMR ${Number(value).toFixed(3)}`;
 let supabase;
 let backendReady = false;
 
+// Turn the old table/order number field into an optional note for the kitchen.
+const oldNumberLabel = document.querySelector('#order-form input[name="number"]')?.closest('label');
+if (oldNumberLabel) {
+  const remarkLabel = document.createElement('label');
+  remarkLabel.textContent = 'Remark for the kitchen / waiter (optional)';
+  const remark = document.createElement('textarea');
+  remark.name = 'kitchen_remark';
+  remark.maxLength = 500;
+  remark.rows = 3;
+  remark.placeholder = 'e.g. Please make it mild, no onions';
+  remarkLabel.append(remark);
+  oldNumberLabel.replaceWith(remarkLabel);
+}
+const orderLead = document.querySelector('#order-section .lead, .order-section .lead');
+if (orderLead) orderLead.textContent = 'Add your name and any helpful kitchen or waiter instructions.';
+
+const reviewButton = document.createElement('button');
+reviewButton.type = 'button';
+reviewButton.className = 'floating-review-order';
+reviewButton.hidden = true;
+reviewButton.textContent = 'Review order';
+reviewButton.addEventListener('click', () => document.querySelector('#order')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+document.body.append(reviewButton);
+
 async function initializeBackend() {
   try {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
@@ -35,7 +59,10 @@ function speak(message) {
 }
 
 function renderCart() {
-  countNode.textContent = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
+  countNode.textContent = itemCount;
+  reviewButton.hidden = !itemCount;
+  reviewButton.textContent = `Review order · ${itemCount}`;
   if (!cart.size) {
     cartNode.innerHTML = '<p class="empty-cart">Choose a dish above to start your order.</p>';
     totalNode.textContent = money(0);
@@ -98,7 +125,8 @@ document.querySelectorAll('.hero-art img').forEach((image, index) => {
   if (heroPhotos[index]) image.src = heroPhotos[index];
 });
 
-document.querySelectorAll('.dish').forEach((card) => card.addEventListener('click', () => {
+// Called by the focused dish picker after the customer confirms an item.
+window.addMenuDishToOrder = (card) => {
   const name = card.dataset.item;
   const item = cart.get(name) || { price: Number(card.dataset.price), quantity: 0 };
   item.quantity += 1;
@@ -108,7 +136,10 @@ document.querySelectorAll('.dish').forEach((card) => card.addEventListener('clic
   card.classList.add('selected');
   window.setTimeout(() => card.classList.remove('selected'), 450);
   speak(card.dataset.message);
-}));
+};
+
+// Clicking a dish opens its large detail view. Selection is confirmed inside the picker.
+document.querySelectorAll('.dish').forEach((card) => card.setAttribute('aria-haspopup', 'dialog'));
 
 document.querySelector('#order-form').addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -125,11 +156,11 @@ document.querySelector('#order-form').addEventListener('submit', async (event) =
   }
   const formData = new FormData(event.currentTarget);
   const customerName = String(formData.get('name')).trim();
-  const orderNumber = String(formData.get('number')).trim();
+  const kitchenRemark = String(formData.get('kitchen_remark') || '').trim();
   const items = [...cart].map(([name, item]) => ({ name, price: item.price, quantity: item.quantity }));
   const order = {
     customer_name: customerName,
-    order_number: orderNumber,
+    kitchen_remark: kitchenRemark,
     items,
     total: Number(items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(3)),
     currency: 'OMR',
@@ -143,7 +174,7 @@ document.querySelector('#order-form').addEventListener('submit', async (event) =
     cart.clear();
     renderCart();
     event.currentTarget.reset();
-    const thanks = `Thank you, ${customerName}. Your order is with the waiter. We hope you enjoy it.`;
+    const thanks = `Thank you, ${customerName}. Your order is with the waiter.`;
     formMessage.textContent = thanks;
     speak(thanks);
   } catch (error) {
@@ -151,7 +182,7 @@ document.querySelector('#order-form').addEventListener('submit', async (event) =
     formMessage.textContent = 'Sorry, your order could not be sent. Please ask the waiter for help.';
   } finally {
     button.disabled = false;
-    button.textContent = 'Send to the waiter ↗';
+    button.textContent = 'Send order to the waiter ↗';
   }
 });
 

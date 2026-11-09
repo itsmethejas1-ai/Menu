@@ -1,0 +1,10 @@
+/* Customer order and multi-dish selection adjustments. */
+.order-section { scroll-margin-top: 32px; }
+.fields textarea[name="kitchen_remark"] { width:100%; min-height:96px; padding:12px 14px; border:1px solid var(--line,#e4dfd3); border-radius:8px; background:#fff; color:var(--ink,#283b31); font:inherit; resize:vertical; }
+.floating-review-order { position:fixed; z-index:900; right:clamp(16px,4vw,48px); bottom:clamp(16px,4vw,38px); padding:15px 22px; border:0; border-radius:999px; background:var(--green,#355a43); color:#fff; box-shadow:0 12px 30px rgba(40,59,49,.24); font:700 1rem var(--sans,Arial,sans-serif); cursor:pointer; animation:review-button-in 280ms ease both; }
+.floating-review-order[hidden] { display:none; }
+.dish-detail-progress { min-height:1.5em; color:var(--muted,#788276); font:500 .92rem/1.5 var(--sans,Arial,sans-serif); }
+.dish-detail-finish { align-self:flex-start; margin-top:16px; padding:10px 0; border:0; background:transparent; color:var(--green,#355a43); font:700 .95rem var(--sans,Arial,sans-serif); text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.dish-detail-add:disabled { opacity:.78; cursor:default; }
+@keyframes review-button-in { from { opacity:0; transform:translateY(12px) scale(.92); } to { opacity:1; transform:translateY(0) scale(1); } }
+@media (max-width:700px) { .floating-review-order { right:16px; bottom:16px; } .dish-detail-finish { margin-top:8px; } }
