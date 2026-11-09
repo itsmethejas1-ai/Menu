@@ -13,7 +13,8 @@ function render() {
   const orders = getOrders();
   const fresh = orders.filter((order) => !seenIds.has(order.id));
   if (soundEnabled && seenIds.size && fresh.length && 'speechSynthesis' in window) {
-    const order = fresh[0]; window.speechSynthesis.cancel();
+    const order = fresh[0];
+    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(`New order from ${order.customerName}, ${order.orderNumber}.`));
   }
   seenIds = new Set(orders.map((order) => order.id));
@@ -36,7 +37,7 @@ soundToggle.addEventListener('click', () => {
   soundEnabled = !soundEnabled;
   soundToggle.textContent = soundEnabled ? 'Sound on' : 'Sound off';
   soundToggle.setAttribute('aria-pressed', String(soundEnabled));
-  if (soundEnabled && 'speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance('Notifications on.'));
+  if (soundEnabled && 'speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance('Notifications are on. I will let you know when a new order arrives.'));
 });
 document.querySelector('#refresh').addEventListener('click', render);
 document.querySelector('#clear-ready').addEventListener('click', () => {

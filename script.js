@@ -14,17 +14,16 @@ function speak(message) {
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(message);
-  utterance.rate = 1;
-  utterance.pitch = 1.08;
+  utterance.rate = 0.94;
+  utterance.pitch = 1.04;
   window.speechSynthesis.speak(utterance);
   audioNote.textContent = `Playing: “${message}”`;
 }
 
 function renderCart() {
-  const totalItems = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
-  countNode.textContent = totalItems;
+  countNode.textContent = [...cart.values()].reduce((sum, item) => sum + item.quantity, 0);
   if (!cart.size) {
-    cartNode.innerHTML = '<p class="empty-cart">Tap a menu item above to add it here.</p>';
+    cartNode.innerHTML = '<p class="empty-cart">Choose a dish above to start your order.</p>';
     totalNode.textContent = money(0);
     return;
   }
@@ -39,14 +38,24 @@ function renderCart() {
     const controls = document.createElement('span');
     controls.className = 'quantity';
     const remove = document.createElement('button');
-    remove.type = 'button'; remove.textContent = '−'; remove.setAttribute('aria-label', `Remove one ${name}`);
-    remove.addEventListener('click', () => { item.quantity -= 1; if (!item.quantity) cart.delete(name); renderCart(); });
-    const quantity = document.createElement('b'); quantity.textContent = item.quantity;
+    remove.type = 'button';
+    remove.textContent = '−';
+    remove.setAttribute('aria-label', `Remove one ${name}`);
+    remove.addEventListener('click', () => {
+      item.quantity -= 1;
+      if (!item.quantity) cart.delete(name);
+      renderCart();
+    });
+    const quantity = document.createElement('b');
+    quantity.textContent = item.quantity;
     const add = document.createElement('button');
-    add.type = 'button'; add.textContent = '+'; add.setAttribute('aria-label', `Add one ${name}`);
+    add.type = 'button';
+    add.textContent = '+';
+    add.setAttribute('aria-label', `Add one ${name}`);
     add.addEventListener('click', () => { item.quantity += 1; renderCart(); });
     controls.append(remove, quantity, add);
-    const subtotal = document.createElement('strong'); subtotal.textContent = money(item.price * item.quantity);
+    const subtotal = document.createElement('strong');
+    subtotal.textContent = money(item.price * item.quantity);
     row.append(title, controls, subtotal);
     cartNode.append(row);
   }
@@ -67,7 +76,11 @@ document.querySelectorAll('.dish').forEach((card) => card.addEventListener('clic
 
 document.querySelector('#order-form').addEventListener('submit', (event) => {
   event.preventDefault();
-  if (!cart.size) { formMessage.textContent = 'Choose at least one menu item first.'; speak('Choose something tasty from the menu first.'); return; }
+  if (!cart.size) {
+    formMessage.textContent = 'Choose a dish you like before sending your order.';
+    speak('Whenever you are ready, choose something tasty from the menu.');
+    return;
+  }
   const formData = new FormData(event.currentTarget);
   const customerName = String(formData.get('name')).trim();
   const orderNumber = String(formData.get('number')).trim();
@@ -86,11 +99,14 @@ document.querySelector('#order-form').addEventListener('submit', (event) => {
     const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     orders.unshift(order);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-    cart.clear(); renderCart(); event.currentTarget.reset();
-    formMessage.textContent = `Thanks, ${customerName}! Your order was sent to the waiter.`;
-    speak(`Thanks, ${customerName}! Your order was sent to the waiter.`);
+    cart.clear();
+    renderCart();
+    event.currentTarget.reset();
+    const thanks = `Thank you, ${customerName}. Your order is with the waiter. We hope you enjoy it.`;
+    formMessage.textContent = thanks;
+    speak(thanks);
   } catch {
-    formMessage.textContent = 'Could not save your order. Please ask the waiter for help.';
+    formMessage.textContent = 'Sorry, your order could not be saved. Please ask the waiter for help.';
   }
 });
 
