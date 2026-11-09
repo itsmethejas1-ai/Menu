@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=photos-match-4">
-  <link rel="stylesheet" href="effects.css?v=photos-match-4">
-  <script src="script.js?v=photos-match-4" defer></script>
-  <script src="effects.js?v=photos-match-4" defer></script>
+  <link rel="stylesheet" href="styles.css?v=motion-video-5">
+  <link rel="stylesheet" href="effects.css?v=motion-video-5">
+  <script src="script.js?v=motion-video-5" defer></script>
+  <script src="effects.js?v=motion-video-5" defer></script>
 </head>
 <body>
   <header class="topbar">
@@ -46,6 +46,11 @@
     <section class="order-section" id="order">
       <div><p class="eyebrow">READY WHEN YOU ARE</p><h2>Your order</h2><p class="lead">Add your name and table/order number so the waiter can bring your food to you.</p></div>
       <form id="order-form"><div class="fields"><label>Your name<input name="name" required maxlength="60" autocomplete="name" placeholder="e.g. Alex"></label><label>Table / order number<input name="number" required maxlength="20" placeholder="e.g. Table 4"></label></div><div class="cart" id="cart"><p class="empty-cart">Choose a dish above to start your order.</p></div><div class="total"><span>Total</span><strong id="total">OMR 0.000</strong></div><button class="button" type="submit">Send to the waiter ↗</button><p id="form-message" role="status" aria-live="polite"></p></form>
+    </section>
+    <section class="kitchen-video scroll-reveal" id="kitchen" aria-labelledby="kitchen-title">
+      <div class="section-head"><div><p class="eyebrow">A LITTLE LOOK BEHIND THE SCENES</p><h2 id="kitchen-title">Made with care, served with joy.</h2></div><p>Take a peek at a dish coming together in the kitchen.</p></div>
+      <div class="video-frame"><iframe src="https://player.vimeo.com/video/319707357?title=0&amp;byline=0&amp;portrait=0&amp;dnt=1" title="Food being prepared in a kitchen" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      <p class="video-caption">Video hosted by Vimeo. Use the player controls to watch.</p>
     </section>
   </main>
   <footer><a class="logo" href="#top">juniper<span>.</span></a><span>Good food, shared often.</span><a href="waiter.html">Waiter dashboard ↗</a></footer>

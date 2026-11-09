@@ -16,7 +16,6 @@
     { match: /cupcake/i, icon: '🧁' }
   ];
 
-  // Show matching, reliable emoji illustrations rather than unrelated or broken remote photos.
   document.querySelectorAll('.food-photo').forEach((image) => {
     const card = image.closest('.dish');
     const name = card?.dataset.item || image.alt || '';
@@ -53,8 +52,8 @@
       scheduled = false;
       if (!hero || !heroText || !heroArt) return;
       const progress = Math.max(0, Math.min(1, window.scrollY / Math.max(hero.offsetHeight, 1)));
-      heroText.style.setProperty('--hero-shift', `${-Math.round(progress * 70)}px`);
-      heroArt.style.setProperty('--hero-shift', `${-Math.round(progress * 105)}px`);
+      heroText.style.setProperty('--hero-shift', `${-Math.round(progress * 90)}px`);
+      heroArt.style.setProperty('--hero-shift', `${-Math.round(progress * 150)}px`);
     };
     window.addEventListener('scroll', () => {
       if (scheduled) return;
@@ -65,7 +64,7 @@
   }
 
   if (reducedMotion || !('IntersectionObserver' in window)) return;
-  const revealTargets = document.querySelectorAll('.section-head, .dish, .order-section > div, .order-section form, footer');
+  const revealTargets = document.querySelectorAll('.section-head, .dish, .order-section > div, .order-section form, .kitchen-video, footer');
   revealTargets.forEach((element) => element.classList.add('scroll-reveal'));
   const observer = new IntersectionObserver((entries, currentObserver) => {
     entries.forEach((entry) => {
@@ -73,6 +72,6 @@
       entry.target.classList.add('is-visible');
       currentObserver.unobserve(entry.target);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -35px 0px' });
+  }, { threshold: 0.08, rootMargin: '0px 0px -25px 0px' });
   revealTargets.forEach((element) => observer.observe(element));
 })();
