@@ -66,14 +66,31 @@ function renderCart() {
   totalNode.textContent = money(total);
 }
 
+const photoFallbacks = {
+  biryani: 'https://images.unsplash.com/photo-1563379091339-03246963d96c?auto=format&fit=crop&w=900&q=80',
+  fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80',
+  burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
+  chicken: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80',
+  shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=80',
+  cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=80'
+};
+
 document.querySelectorAll('.food-photo').forEach((image) => {
   image.addEventListener('error', () => {
-    const fallback = document.createElement('span');
-    fallback.className = 'image-fallback';
-    fallback.setAttribute('role', 'img');
-    fallback.textContent = image.alt || 'Menu photo';
-    image.replaceWith(fallback);
-  }, { once: true });
+    if (!image.dataset.fallbackAttempted) {
+      image.dataset.fallbackAttempted = 'true';
+      const dish = image.closest('.dish');
+      const key = dish?.classList.contains('biryani') ? 'biryani'
+        : dish?.classList.contains('fries') ? 'fries'
+        : dish?.classList.contains('shake') ? 'shake'
+        : dish?.classList.contains('cupcake') ? 'cupcake'
+        : dish?.dataset.item === 'Chicken burger' ? 'chicken' : 'burger';
+      image.src = `${photoFallbacks[key]}&fallback=1`;
+      return;
+    }
+    image.alt = image.alt || 'Menu photo unavailable';
+    image.classList.add('photo-unavailable');
+  }, { once: false });
 });
 
 document.querySelectorAll('.dish').forEach((card) => card.addEventListener('click', () => {
