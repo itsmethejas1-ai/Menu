@@ -1,17 +1,15 @@
-/* Photo-based menu styling and motion */
+/* Scroll reveals and image presentation */
 html { scroll-behavior: smooth; scroll-padding-top: 20px; }
 @media (prefers-reduced-motion: no-preference) {
-  .scroll-reveal { opacity: 0; transform: translateY(58px) scale(.96); transition: opacity 750ms ease, transform 850ms cubic-bezier(.16,1,.3,1); }
-  .scroll-reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
-  .dish.scroll-reveal:nth-child(3n + 2) { transition-delay: 100ms; }
-  .dish.scroll-reveal:nth-child(3n) { transition-delay: 190ms; }
-  .dish { transition: transform 260ms ease, box-shadow 260ms ease; }
-  .dish:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 22px 45px #283b3128; }
-  .hero-art img { animation: hero-image-in 900ms ease both; }
-  .hero-art img:nth-child(2n) { animation-delay: 150ms; }
-  .hero-art img:nth-child(3n) { animation-delay: 260ms; }
+  .scroll-reveal { opacity: 0; transform: translateY(36px); transition: opacity 650ms ease, transform 700ms cubic-bezier(.16,1,.3,1); }
+  .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .dish.scroll-reveal:nth-child(3n + 2) { transition-delay: 90ms; }
+  .dish.scroll-reveal:nth-child(3n) { transition-delay: 170ms; }
+  .hero-art img { animation: hero-image-in 850ms ease both; }
+  .hero-art img:nth-child(2n) { animation-delay: 120ms; }
+  .hero-art img:nth-child(3n) { animation-delay: 220ms; }
 }
-@keyframes hero-image-in { 0% { opacity: 0; transform: translateY(26px) scale(.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hero-image-in { from { opacity: 0; transform: translateY(20px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .dish .food-photo {
   display: block;
   width: 100%;
@@ -33,7 +31,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 20px; }
   border-radius: 8px;
   background: linear-gradient(135deg,#e9e2d3,#f6efe3);
 }
-/* Make the brand the welcoming first screen; menu and ordering stay below. */
 .hero {
   min-height: calc(100svh - 76px);
   align-items: center;
@@ -44,6 +41,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 20px; }
   font-size: clamp(3.8rem, 9vw, 7.5rem);
   line-height: .98;
   letter-spacing: -.055em;
+  overflow-wrap: anywhere;
 }
 .hero h1 em { color: var(--green, #355a43); }
 .hero .lead { max-width: 34rem; }

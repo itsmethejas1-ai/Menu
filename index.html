@@ -4,25 +4,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fff8ed">
-  <meta name="description" content="Choose an affordable meal, hear a friendly response, and send your order to the waiter.">
-  <title>Juniper — Community Menu</title>
+  <meta name="description" content="Welcome to 9F thattukada. Explore the menu, choose a meal, and send your order to the waiter.">
+  <title>9F thattukada</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://images.unsplash.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=photos-final-7">
-  <link rel="stylesheet" href="effects.css?v=photos-final-7">
-  <script src="script.js?v=photos-final-7" defer></script>
-  <script src="effects.js?v=photos-final-7" defer></script>
+  <link rel="stylesheet" href="styles.css?v=9f-realphotos-1">
+  <link rel="stylesheet" href="effects.css?v=9f-realphotos-1">
+  <script src="script.js?v=9f-realphotos-1" defer></script>
+  <script src="effects.js?v=9f-realphotos-1" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <a class="logo" href="#top">juniper<span>.</span></a>
+    <a class="logo" href="#top" aria-label="9F thattukada home">9F <span>thattukada</span></a>
     <nav aria-label="Main navigation"><a href="#menu">Menu</a><a href="#order">Your order <span id="cart-count">0</span></a><a class="outline" href="waiter.html">Waiter view ↗</a></nav>
   </header>
   <main id="top">
     <section class="hero">
-      <div><p class="eyebrow">✳ GOOD FOOD · GOOD MOOD</p><h1>A little joy<br><em>on your plate.</em></h1><p class="lead">Good food should feel welcoming to everyone. Pick what sounds good, and we’ll add a little cheer when you choose.</p><a class="button" href="#menu">See the menu ↓</a></div>
-      <div class="hero-art" aria-label="Photos of dishes from the menu">
+      <div><p class="eyebrow">✳ GOOD FOOD · GOOD MOOD</p><h1>9F<br><em>thattukada</em></h1><p class="lead">Welcome to 9F thattukada — good food, warm flavors, and something for everyone. Scroll down to explore our menu.</p><a class="button" href="#menu">Scroll for menu ↓</a></div>
+      <div class="hero-art" aria-label="Real food photos from the menu">
         <img src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&amp;fit=crop&amp;w=700&amp;q=85" alt="Chicken biryani" width="350" height="220">
         <img src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&amp;fit=crop&amp;w=700&amp;q=85" alt="French fries" width="350" height="220">
         <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&amp;fit=crop&amp;w=700&amp;q=85" alt="Classic beef burger" width="350" height="220">
@@ -30,7 +32,7 @@
       </div>
     </section>
     <section class="menu" id="menu">
-      <div class="section-head"><div><p class="eyebrow">A COMMUNITY MENU</p><h2>What would make you smile?</h2></div><p>Tap an item to add it and hear a friendly message.<br>Prices are shown in OMR, in baisa amounts.</p></div>
+      <div class="section-head"><div><p class="eyebrow">9F THATTUKADA MENU</p><h2>What would make you smile?</h2></div><p>Tap an item to add it and hear a friendly message.<br>Prices are shown in OMR, in baisa amounts.</p></div>
       <div class="grid" id="menu-grid">
         <button class="dish biryani" type="button" data-item="Chicken biryani" data-price="0.500" data-message="Chicken biryani, lovely choice. Warm spices, a comforting plate, and something good to look forward to. I've added it to your order."><img class="food-photo" src="https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Chicken biryani with rice and spices" width="500" height="300" loading="lazy" decoding="async"><span class="category">A COMFORTING FAVORITE</span><strong>Chicken biryani</strong><span class="description">Fragrant rice, gentle spices, and a hearty serving</span><span class="dish-bottom"><b>OMR 0.500</b><span class="tap-hint">Choose this ↗</span></span></button>
         <button class="dish fries" type="button" data-item="French fries" data-price="0.100" data-message="French fries, nice. A little crispy treat is always welcome. I've added them for you."><img class="food-photo" src="https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Golden French fries" width="500" height="300" loading="lazy" decoding="async"><span class="category">A LITTLE CRUNCH</span><strong>French fries</strong><span class="description">Golden, crispy, and just right for sharing</span><span class="dish-bottom"><b>OMR 0.100</b><span class="tap-hint">Choose these ↗</span></span></button>
@@ -50,11 +52,11 @@
     <section class="kitchen-video scroll-reveal" id="kitchen" aria-labelledby="kitchen-title">
       <div class="section-head"><div><p class="eyebrow">A LITTLE LOOK BEHIND THE SCENES</p><h2 id="kitchen-title">Made with care, served with joy.</h2></div><p>Take a peek at a dish coming together in the kitchen.</p></div>
       <div class="video-frame" style="position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:18px;background:#24372c;box-shadow:0 14px 35px #355a4320;">
-        <video src="https://player.vimeo.com/external/309695717.sd.mp4?s=ddc94d94492716e74be2fae6c40bce010b7b7dfc&profile_id=164&oauth2_token_id=57447761" title="Food being prepared in a kitchen" muted autoplay loop playsinline controls style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0;background:#24372c;"></video>
+        <video src="https://player.vimeo.com/external/309695717.sd.mp4?s=ddc94d94492716e74be2fae6c40bce010b7b7dfc&amp;profile_id=164&amp;oauth2_token_id=57447761" title="Food being prepared in a kitchen" muted autoplay loop playsinline controls style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border:0;background:#24372c;"></video>
       </div>
       <p class="video-caption">Video hosted by Pexels/Vimeo. Use the player controls to watch.</p>
     </section>
   </main>
-  <footer><a class="logo" href="#top">juniper<span>.</span></a><span>Good food, shared often.</span><a href="waiter.html">Waiter dashboard ↗</a></footer>
+  <footer><a class="logo" href="#top" aria-label="9F thattukada home">9F <span>thattukada</span></a><span>Good food, shared often.</span><a href="waiter.html">Waiter dashboard ↗</a></footer>
 </body>
 </html>

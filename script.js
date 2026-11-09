@@ -1,19 +1,5 @@
 const SUPABASE_URL = 'https://gnscldexzkzpjyqygiaa.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fUKWBw9Ck8geL4qqNhn3pw_EFTXc9XL';
-
-// Brand the browser tab and the page's first screen.
-document.title = '9F thattukada';
-document.querySelectorAll('.logo').forEach((logo) => {
-  logo.innerHTML = '9F <span>thattukada</span>';
-  logo.setAttribute('aria-label', '9F thattukada home');
-});
-const heroHeading = document.querySelector('.hero h1');
-if (heroHeading) heroHeading.innerHTML = '9F<br><em>thattukada</em>';
-const heroLead = document.querySelector('.hero .lead');
-if (heroLead) heroLead.textContent = 'Welcome to 9F thattukada — good food, warm flavors, and something for everyone. Scroll down to explore our menu.';
-const heroButton = document.querySelector('.hero .button');
-if (heroButton) heroButton.textContent = 'Scroll for menu ↓';
-
 const cart = new Map();
 const cartNode = document.querySelector('#cart');
 const totalNode = document.querySelector('#total');
@@ -80,26 +66,25 @@ function renderCart() {
   totalNode.textContent = money(total);
 }
 
-// Keep menu photography bundled with the site so it remains available offline and
-// does not depend on third-party image hosts.
-const localFoodPhotos = {
-  biryani: 'assets/food/chicken-biryani.svg',
-  fries: 'assets/food/french-fries.svg',
-  beefBurger: 'assets/food/beef-burger.svg',
-  chickenBurger: 'assets/food/chicken-burger.svg',
-  cheeseburger: 'assets/food/cheeseburger.svg',
-  shake: 'assets/food/oreo-milkshake.svg',
-  cupcake: 'assets/food/chocolate-cupcake.svg'
+// Real dish photography from Unsplash, selected to match each menu item.
+const foodPhotos = {
+  biryani: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=85',
+  fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85',
+  beefBurger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85',
+  chickenBurger: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=85',
+  cheeseburger: 'https://images.unsplash.com/photo-1553979459-d2229ba7433a?auto=format&fit=crop&w=900&q=85',
+  shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=85',
+  cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=85'
 };
 
 function photoForDish(dish) {
-  if (dish.classList.contains('biryani')) return localFoodPhotos.biryani;
-  if (dish.classList.contains('fries')) return localFoodPhotos.fries;
-  if (dish.classList.contains('shake')) return localFoodPhotos.shake;
-  if (dish.classList.contains('cupcake')) return localFoodPhotos.cupcake;
-  if (dish.dataset.item === 'Chicken burger') return localFoodPhotos.chickenBurger;
-  if (dish.dataset.item === 'Cheeseburger') return localFoodPhotos.cheeseburger;
-  return localFoodPhotos.beefBurger;
+  if (dish.classList.contains('biryani')) return foodPhotos.biryani;
+  if (dish.classList.contains('fries')) return foodPhotos.fries;
+  if (dish.classList.contains('shake')) return foodPhotos.shake;
+  if (dish.classList.contains('cupcake')) return foodPhotos.cupcake;
+  if (dish.dataset.item === 'Chicken burger') return foodPhotos.chickenBurger;
+  if (dish.dataset.item === 'Cheeseburger') return foodPhotos.cheeseburger;
+  return foodPhotos.beefBurger;
 }
 
 document.querySelectorAll('.food-photo').forEach((image) => {
@@ -108,8 +93,7 @@ document.querySelectorAll('.food-photo').forEach((image) => {
   image.addEventListener('error', () => image.classList.add('photo-unavailable'), { once: true });
 });
 
-// The hero collage uses the same bundled artwork as the corresponding menu items.
-const heroPhotos = [localFoodPhotos.biryani, localFoodPhotos.fries, localFoodPhotos.beefBurger, localFoodPhotos.cupcake];
+const heroPhotos = [foodPhotos.biryani, foodPhotos.fries, foodPhotos.beefBurger, foodPhotos.cupcake];
 document.querySelectorAll('.hero-art img').forEach((image, index) => {
   if (heroPhotos[index]) image.src = heroPhotos[index];
 });
