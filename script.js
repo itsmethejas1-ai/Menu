@@ -1,11 +1,25 @@
-const STORAGE_KEY = 'juniper-orders-v1';
+const SUPABASE_URL = 'https://gnscldexzkzpjyqygiaa.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fUKWBw9Ck8geL4qqNhn3pw_EFTXc9XL';
 const cart = new Map();
 const cartNode = document.querySelector('#cart');
 const totalNode = document.querySelector('#total');
 const countNode = document.querySelector('#cart-count');
 const formMessage = document.querySelector('#form-message');
 const audioNote = document.querySelector('#audio-note');
-const money = (value) => `OMR ${value.toFixed(3)}`;
+const money = (value) => `OMR ${Number(value).toFixed(3)}`;
+let supabase;
+let backendReady = false;
+
+async function initializeBackend() {
+  try {
+    const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    backendReady = true;
+  } catch (error) {
+    console.error('Could not initialize the order service:', error);
+    formMessage.textContent = 'The order service is unavailable right now. Please ask the waiter for help.';
+  }
+}
 
 function speak(message) {
   if (!('speechSynthesis' in window)) {
@@ -38,29 +52,29 @@ function renderCart() {
     const controls = document.createElement('span');
     controls.className = 'quantity';
     const remove = document.createElement('button');
-    remove.type = 'button';
-    remove.textContent = '−';
-    remove.setAttribute('aria-label', `Remove one ${name}`);
-    remove.addEventListener('click', () => {
-      item.quantity -= 1;
-      if (!item.quantity) cart.delete(name);
-      renderCart();
-    });
-    const quantity = document.createElement('b');
-    quantity.textContent = item.quantity;
+    remove.type = 'button'; remove.textContent = '−'; remove.setAttribute('aria-label', `Remove one ${name}`);
+    remove.addEventListener('click', () => { item.quantity -= 1; if (!item.quantity) cart.delete(name); renderCart(); });
+    const quantity = document.createElement('b'); quantity.textContent = item.quantity;
     const add = document.createElement('button');
-    add.type = 'button';
-    add.textContent = '+';
-    add.setAttribute('aria-label', `Add one ${name}`);
+    add.type = 'button'; add.textContent = '+'; add.setAttribute('aria-label', `Add one ${name}`);
     add.addEventListener('click', () => { item.quantity += 1; renderCart(); });
     controls.append(remove, quantity, add);
-    const subtotal = document.createElement('strong');
-    subtotal.textContent = money(item.price * item.quantity);
+    const subtotal = document.createElement('strong'); subtotal.textContent = money(item.price * item.quantity);
     row.append(title, controls, subtotal);
     cartNode.append(row);
   }
   totalNode.textContent = money(total);
 }
+
+document.querySelectorAll('.food-photo').forEach((image) => {
+  image.addEventListener('error', () => {
+    const fallback = document.createElement('span');
+    fallback.className = 'image-fallback';
+    fallback.setAttribute('role', 'img');
+    fallback.textContent = image.alt || 'Menu photo';
+    image.replaceWith(fallback);
+  }, { once: true });
+});
 
 document.querySelectorAll('.dish').forEach((card) => card.addEventListener('click', () => {
   const name = card.dataset.item;
@@ -74,40 +88,50 @@ document.querySelectorAll('.dish').forEach((card) => card.addEventListener('clic
   speak(card.dataset.message);
 }));
 
-document.querySelector('#order-form').addEventListener('submit', (event) => {
+document.querySelector('#order-form').addEventListener('submit', async (event) => {
   event.preventDefault();
   if (!cart.size) {
     formMessage.textContent = 'Choose a dish you like before sending your order.';
     speak('Whenever you are ready, choose something tasty from the menu.');
     return;
   }
+  const button = event.currentTarget.querySelector('button[type="submit"]');
+  if (!backendReady) {
+    formMessage.textContent = 'Connecting to the order service. Please try again in a moment.';
+    await initializeBackend();
+    if (!backendReady) return;
+  }
   const formData = new FormData(event.currentTarget);
   const customerName = String(formData.get('name')).trim();
   const orderNumber = String(formData.get('number')).trim();
   const items = [...cart].map(([name, item]) => ({ name, price: item.price, quantity: item.quantity }));
   const order = {
-    id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
-    customerName,
-    orderNumber,
-    currency: 'OMR',
+    customer_name: customerName,
+    order_number: orderNumber,
     items,
-    total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    status: 'waiting',
-    createdAt: new Date().toISOString()
+    total: Number(items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(3)),
+    currency: 'OMR',
+    status: 'waiting'
   };
+  button.disabled = true;
+  button.textContent = 'Sending…';
   try {
-    const orders = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    orders.unshift(order);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
+    const { error } = await supabase.from('orders').insert(order);
+    if (error) throw error;
     cart.clear();
     renderCart();
     event.currentTarget.reset();
     const thanks = `Thank you, ${customerName}. Your order is with the waiter. We hope you enjoy it.`;
     formMessage.textContent = thanks;
     speak(thanks);
-  } catch {
-    formMessage.textContent = 'Sorry, your order could not be saved. Please ask the waiter for help.';
+  } catch (error) {
+    console.error('Order submission failed:', error);
+    formMessage.textContent = 'Sorry, your order could not be sent. Please ask the waiter for help.';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Send to the waiter ↗';
   }
 });
 
 renderCart();
+initializeBackend();
