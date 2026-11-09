@@ -1,5 +1,19 @@
 const SUPABASE_URL = 'https://gnscldexzkzpjyqygiaa.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fUKWBw9Ck8geL4qqNhn3pw_EFTXc9XL';
+
+// Brand the browser tab and the page's first screen.
+document.title = '9F thattukada';
+document.querySelectorAll('.logo').forEach((logo) => {
+  logo.innerHTML = '9F <span>thattukada</span>';
+  logo.setAttribute('aria-label', '9F thattukada home');
+});
+const heroHeading = document.querySelector('.hero h1');
+if (heroHeading) heroHeading.innerHTML = '9F<br><em>thattukada</em>';
+const heroLead = document.querySelector('.hero .lead');
+if (heroLead) heroLead.textContent = 'Welcome to 9F thattukada — good food, warm flavors, and something for everyone. Scroll down to explore our menu.';
+const heroButton = document.querySelector('.hero .button');
+if (heroButton) heroButton.textContent = 'Scroll for menu ↓';
+
 const cart = new Map();
 const cartNode = document.querySelector('#cart');
 const totalNode = document.querySelector('#total');
