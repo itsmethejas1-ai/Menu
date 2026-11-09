@@ -66,31 +66,38 @@ function renderCart() {
   totalNode.textContent = money(total);
 }
 
-const photoFallbacks = {
-  biryani: 'https://images.unsplash.com/photo-1563379091339-03246963d96c?auto=format&fit=crop&w=900&q=80',
-  fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=80',
-  burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80',
-  chicken: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=80',
-  shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=80',
-  cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=80'
+// Keep menu photography bundled with the site so it remains available offline and
+// does not depend on third-party image hosts.
+const localFoodPhotos = {
+  biryani: 'assets/food/chicken-biryani.svg',
+  fries: 'assets/food/french-fries.svg',
+  beefBurger: 'assets/food/beef-burger.svg',
+  chickenBurger: 'assets/food/chicken-burger.svg',
+  cheeseburger: 'assets/food/cheeseburger.svg',
+  shake: 'assets/food/oreo-milkshake.svg',
+  cupcake: 'assets/food/chocolate-cupcake.svg'
 };
 
+function photoForDish(dish) {
+  if (dish.classList.contains('biryani')) return localFoodPhotos.biryani;
+  if (dish.classList.contains('fries')) return localFoodPhotos.fries;
+  if (dish.classList.contains('shake')) return localFoodPhotos.shake;
+  if (dish.classList.contains('cupcake')) return localFoodPhotos.cupcake;
+  if (dish.dataset.item === 'Chicken burger') return localFoodPhotos.chickenBurger;
+  if (dish.dataset.item === 'Cheeseburger') return localFoodPhotos.cheeseburger;
+  return localFoodPhotos.beefBurger;
+}
+
 document.querySelectorAll('.food-photo').forEach((image) => {
-  image.addEventListener('error', () => {
-    if (!image.dataset.fallbackAttempted) {
-      image.dataset.fallbackAttempted = 'true';
-      const dish = image.closest('.dish');
-      const key = dish?.classList.contains('biryani') ? 'biryani'
-        : dish?.classList.contains('fries') ? 'fries'
-        : dish?.classList.contains('shake') ? 'shake'
-        : dish?.classList.contains('cupcake') ? 'cupcake'
-        : dish?.dataset.item === 'Chicken burger' ? 'chicken' : 'burger';
-      image.src = `${photoFallbacks[key]}&fallback=1`;
-      return;
-    }
-    image.alt = image.alt || 'Menu photo unavailable';
-    image.classList.add('photo-unavailable');
-  }, { once: false });
+  const dish = image.closest('.dish');
+  if (dish) image.src = photoForDish(dish);
+  image.addEventListener('error', () => image.classList.add('photo-unavailable'), { once: true });
+});
+
+// The hero collage uses the same bundled artwork as the corresponding menu items.
+const heroPhotos = [localFoodPhotos.biryani, localFoodPhotos.fries, localFoodPhotos.beefBurger, localFoodPhotos.cupcake];
+document.querySelectorAll('.hero-art img').forEach((image, index) => {
+  if (heroPhotos[index]) image.src = heroPhotos[index];
 });
 
 document.querySelectorAll('.dish').forEach((card) => card.addEventListener('click', () => {
