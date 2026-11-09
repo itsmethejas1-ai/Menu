@@ -1,0 +1,25 @@
+/* Properly-sized, dish-matched photos. */
+.dish .food-photo {
+  display: block;
+  width: 100%;
+  height: 165px;
+  flex: none;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 3px;
+  background: linear-gradient(135deg,#e9e2d3,#f6efe3);
+}
+.hero-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 8px;
+  background: linear-gradient(135deg,#e9e2d3,#f6efe3);
+}
+.dish .food-photo.photo-unavailable { object-fit: contain; color: #788276; }
+@media (max-width:850px) { .dish .food-photo { height:155px; } }
+@media (max-width:600px) { .dish .food-photo { height:125px; } }

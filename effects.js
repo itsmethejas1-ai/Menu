@@ -1,67 +1,34 @@
 (() => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const dishIcons = {
-    'Chicken biryani': ['🍛'],
-    'French fries': ['🍟'],
-    'Classic beef burger': ['🍔'],
-    'Chicken burger': ['🍗', '🍔'],
-    Cheeseburger: ['🧀', '🍔'],
-    'Oreo milkshake': ['🥤', '🍪'],
-    'Chocolate cupcake': ['🧁']
+
+  // Keep the listed dish photos visible; if one host fails, retry with a matching photo.
+  const matchingFallbacks = {
+    biryani: 'https://images.pexels.com/photos/12737656/pexels-photo-12737656.jpeg?auto=compress&cs=tinysrgb&w=900',
+    fries: 'https://images.pexels.com/photos/1893555/pexels-photo-1893555.jpeg?auto=compress&cs=tinysrgb&w=900',
+    beef: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=900',
+    chicken: 'https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=900',
+    cheese: 'https://images.pexels.com/photos/1556909/pexels-photo-1556909.jpeg?auto=compress&cs=tinysrgb&w=900',
+    shake: 'https://images.pexels.com/photos/3727250/pexels-photo-3727250.jpeg?auto=compress&cs=tinysrgb&w=900',
+    cupcake: 'https://images.pexels.com/photos/1055272/pexels-photo-1055272.jpeg?auto=compress&cs=tinysrgb&w=900'
   };
-  const heroIcons = [
-    { match: /rice|biryani/i, icon: '🍛' },
-    { match: /fries/i, icon: '🍟' },
-    { match: /burger/i, icon: '🍔' },
-    { match: /cupcake/i, icon: '🧁' }
-  ];
+  const photoKey = (name = '') => {
+    if (name.includes('biryani')) return 'biryani';
+    if (name.includes('fries')) return 'fries';
+    if (name === 'Chicken burger') return 'chicken';
+    if (name === 'Cheeseburger') return 'cheese';
+    if (name.includes('milkshake')) return 'shake';
+    if (name.includes('cupcake')) return 'cupcake';
+    return 'beef';
+  };
 
-  document.querySelectorAll('.food-photo').forEach((image) => {
-    const card = image.closest('.dish');
-    const name = card?.dataset.item || image.alt || '';
-    const illustration = document.createElement('span');
-    illustration.className = 'food-illustration';
-    illustration.setAttribute('role', 'img');
-    illustration.setAttribute('aria-label', name);
-    for (const emoji of dishIcons[name] || ['🍽️']) {
-      const icon = document.createElement('span');
-      icon.className = 'food-emoji';
-      icon.setAttribute('aria-hidden', 'true');
-      icon.textContent = emoji;
-      illustration.append(icon);
-    }
-    image.replaceWith(illustration);
+  document.querySelectorAll('.food-photo, .hero-art img').forEach((image) => {
+    image.addEventListener('error', () => {
+      if (image.dataset.photoFallbackTried) return;
+      image.dataset.photoFallbackTried = 'true';
+      const name = image.closest('.dish')?.dataset.item || image.alt || '';
+      image.src = matchingFallbacks[photoKey(name)];
+    });
   });
-
-  document.querySelectorAll('.hero-art img').forEach((image) => {
-    const entry = heroIcons.find(({ match }) => match.test(image.alt));
-    const illustration = document.createElement('span');
-    illustration.className = 'hero-food-emoji';
-    illustration.setAttribute('role', 'img');
-    illustration.setAttribute('aria-label', image.alt || 'Food illustration');
-    illustration.textContent = entry?.icon || '🍽️';
-    image.replaceWith(illustration);
-  });
-
-  if (!reducedMotion) {
-    const hero = document.querySelector('.hero');
-    const heroText = hero?.querySelector(':scope > div:first-child');
-    const heroArt = hero?.querySelector('.hero-art');
-    let scheduled = false;
-    const updateHeroParallax = () => {
-      scheduled = false;
-      if (!hero || !heroText || !heroArt) return;
-      const progress = Math.max(0, Math.min(1, window.scrollY / Math.max(hero.offsetHeight, 1)));
-      heroText.style.setProperty('--hero-shift', `${-Math.round(progress * 90)}px`);
-      heroArt.style.setProperty('--hero-shift', `${-Math.round(progress * 150)}px`);
-    };
-    window.addEventListener('scroll', () => {
-      if (scheduled) return;
-      scheduled = true;
-      window.requestAnimationFrame(updateHeroParallax);
-    }, { passive: true });
-    updateHeroParallax();
-  }
 
   if (reducedMotion || !('IntersectionObserver' in window)) return;
   const revealTargets = document.querySelectorAll('.section-head, .dish, .order-section > div, .order-section form, .kitchen-video, footer');
