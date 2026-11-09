@@ -5,7 +5,7 @@ const totalNode = document.querySelector('#total');
 const countNode = document.querySelector('#cart-count');
 const formMessage = document.querySelector('#form-message');
 const audioNote = document.querySelector('#audio-note');
-const money = (value) => `$${value.toFixed(2)}`;
+const money = (value) => `OMR ${value.toFixed(3)}`;
 
 function speak(message) {
   if (!('speechSynthesis' in window)) {
@@ -25,7 +25,7 @@ function renderCart() {
   countNode.textContent = totalItems;
   if (!cart.size) {
     cartNode.innerHTML = '<p class="empty-cart">Tap a menu item above to add it here.</p>';
-    totalNode.textContent = '$0.00';
+    totalNode.textContent = money(0);
     return;
   }
   cartNode.replaceChildren();
@@ -76,6 +76,7 @@ document.querySelector('#order-form').addEventListener('submit', (event) => {
     id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
     customerName,
     orderNumber,
+    currency: 'OMR',
     items,
     total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     status: 'waiting',

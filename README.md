@@ -1,6 +1,7 @@
 # Juniper menu ordering demo
 
-- `index.html`: customer menu with biryani, French fries, burger, Oreo milkshake, and chocolate cupcake. Choosing an item adds it to the cart and speaks a cheerful, item-specific message.
+- `index.html`: customer menu with Chicken biryani, French fries, Classic beef burger, Chicken burger, Cheeseburger, Oreo milkshake, and Chocolate cupcake. Prices are displayed in Omani rial (OMR) to three decimal places (baisa).
+- Choosing a menu item adds it to the cart and speaks a cheerful, item-specific message.
 - `waiter.html`: waiter dashboard with order status controls and optional spoken alerts.
 
 ## Preview locally
