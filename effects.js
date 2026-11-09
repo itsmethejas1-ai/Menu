@@ -1,37 +1,46 @@
 (() => {
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const dishes = [
-    { match: 'biryani', icon: '🍛' },
-    { match: 'fries', icon: '🍟' },
-    { match: 'Classic beef', icon: '🍔' },
-    { match: 'Chicken burger', icon: '🍔' },
-    { match: 'Cheeseburger', icon: '🍔' },
-    { match: 'milkshake', icon: '🥤' },
-    { match: 'cupcake', icon: '🧁' }
+  const dishIcons = {
+    'Chicken biryani': ['🍛'],
+    'French fries': ['🍟'],
+    'Classic beef burger': ['🍔'],
+    'Chicken burger': ['🍗', '🍔'],
+    Cheeseburger: ['🧀', '🍔'],
+    'Oreo milkshake': ['🥤', '🍪'],
+    'Chocolate cupcake': ['🧁']
+  };
+  const heroIcons = [
+    { match: /rice|biryani/i, icon: '🍛' },
+    { match: /fries/i, icon: '🍟' },
+    { match: /burger/i, icon: '🍔' },
+    { match: /cupcake/i, icon: '🧁' }
   ];
-  const dishIcon = (item) => dishes.find(({ match }) => item.toLowerCase().includes(match.toLowerCase()))?.icon || '🍽️';
 
-  // Use emoji illustrations instead of remote photos so the menu works offline too.
+  // Show matching, reliable emoji illustrations rather than unrelated or broken remote photos.
   document.querySelectorAll('.food-photo').forEach((image) => {
     const card = image.closest('.dish');
+    const name = card?.dataset.item || image.alt || '';
     const illustration = document.createElement('span');
     illustration.className = 'food-illustration';
     illustration.setAttribute('role', 'img');
-    illustration.setAttribute('aria-label', image.alt || card?.dataset.item || 'Food illustration');
-    illustration.innerHTML = `<span class="food-emoji" aria-hidden="true">${dishIcon(card?.dataset.item || '')}</span>`;
+    illustration.setAttribute('aria-label', name);
+    for (const emoji of dishIcons[name] || ['🍽️']) {
+      const icon = document.createElement('span');
+      icon.className = 'food-emoji';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = emoji;
+      illustration.append(icon);
+    }
     image.replaceWith(illustration);
   });
 
   document.querySelectorAll('.hero-art img').forEach((image) => {
-    const alt = image.alt.toLowerCase();
-    const icon = alt.includes('rice') || alt.includes('biryani') ? '🍛'
-      : alt.includes('fries') ? '🍟'
-      : alt.includes('burger') ? '🍔' : '🧁';
+    const entry = heroIcons.find(({ match }) => match.test(image.alt));
     const illustration = document.createElement('span');
     illustration.className = 'hero-food-emoji';
     illustration.setAttribute('role', 'img');
     illustration.setAttribute('aria-label', image.alt || 'Food illustration');
-    illustration.textContent = icon;
+    illustration.textContent = entry?.icon || '🍽️';
     image.replaceWith(illustration);
   });
 
@@ -44,8 +53,7 @@
       scheduled = false;
       if (!hero || !heroText || !heroArt) return;
       const progress = Math.max(0, Math.min(1, window.scrollY / Math.max(hero.offsetHeight, 1)));
-      const shift = `${-Math.round(progress * 70)}px`;
-      heroText.style.setProperty('--hero-shift', shift);
+      heroText.style.setProperty('--hero-shift', `${-Math.round(progress * 70)}px`);
       heroArt.style.setProperty('--hero-shift', `${-Math.round(progress * 105)}px`);
     };
     window.addEventListener('scroll', () => {
