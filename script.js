@@ -10,6 +10,61 @@ const money = (value) => `OMR ${Number(value).toFixed(3)}`;
 let supabase;
 let backendReady = false;
 
+// Menu prices are in OMR (three decimal places); 0.100 OMR = 100 baiza.
+const menuItems = [
+  { name: 'Popcorn', price: 0.100, category: 'SNACKS', description: 'Light, crunchy popcorn for a quick snack.', photo: 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=900&q=85', className: 'popcorn' },
+  { name: 'Dabeli', price: 0.200, category: 'VEG · INDIAN STREET FOOD', description: 'A spicy-sweet potato filling in a toasted bun.', photo: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=900&q=85', className: 'dabeli' },
+  { name: 'Brownies', price: 0.200, category: 'DESSERTS', description: 'Rich, fudgy chocolate brownie.', photo: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=85', className: 'brownies' },
+  { name: 'Soft drinks', price: 0.150, category: 'DRINKS', description: 'A chilled soft drink to go with your meal.', photo: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=900&q=85', className: 'soft-drinks' },
+  { name: 'Mojito', price: 0.300, category: 'DRINKS', description: 'A refreshing mint and lime cooler.', photo: 'https://images.unsplash.com/photo-1513558161293-cdaf765edfd7?auto=format&fit=crop&w=900&q=85', className: 'mojito' },
+  { name: 'Ice cream', price: 0.200, category: 'DESSERTS', description: 'A cool, creamy scoop of ice cream.', photo: 'https://images.unsplash.com/photo-1501446529957-6226bd447c46?auto=format&fit=crop&w=900&q=85', className: 'ice-cream' },
+  { name: 'Samosa', price: 0.100, category: 'VEG · SNACKS', description: 'Golden pastry filled with spiced vegetables.', photo: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=85', className: 'samosa' },
+  { name: 'Water bottle', price: 0.100, category: 'DRINKS', description: 'A bottle of refreshing water.', photo: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=900&q=85', className: 'water' },
+  { name: 'French fries', price: 0.150, category: 'VEG · SNACKS', description: 'Crispy golden fries, a timeless favorite.', photo: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85', className: 'fries' },
+  { name: 'Cookies', price: 0.100, category: 'DESSERTS', description: 'A freshly baked cookie for a little treat.', photo: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=85', className: 'cookies' },
+  { name: 'Chocolate cake', price: 0.250, category: 'DESSERTS', description: 'A slice of soft chocolate cake.', photo: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85', className: 'chocolate-cake' },
+  { name: 'Sipups', price: 0.050, category: 'DRINKS', description: 'A sweet, chilled sip-up drink.', photo: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=900&q=85', className: 'sipups' },
+  { name: 'Chai', price: 0.100, category: 'DRINKS', description: 'Warm, comforting spiced tea.', photo: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=900&q=85', className: 'chai' },
+  { name: 'Chicken wrap', price: 0.300, category: 'CHICKEN', description: 'Tender chicken wrapped up for an easy, tasty meal.', photo: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=900&q=85', className: 'chicken-wrap' },
+  { name: 'Burger', price: 0.300, category: 'BURGERS', description: 'A satisfying burger with fresh, tasty layers.', photo: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85', className: 'burger' }
+];
+
+// Replace the starter dishes so the menu and the detail picker share the same items.
+const menuGrid = document.querySelector('#menu-grid');
+if (menuGrid) {
+  menuGrid.replaceChildren(...menuItems.map((item) => {
+    const card = document.createElement('button');
+    card.className = `dish ${item.className}`;
+    card.type = 'button';
+    card.dataset.item = item.name;
+    card.dataset.price = item.price.toFixed(3);
+    card.dataset.message = `${item.name}, great choice. I've added it to your order.`;
+
+    const image = document.createElement('img');
+    image.className = 'food-photo';
+    image.src = item.photo;
+    image.alt = item.name;
+    image.loading = 'lazy';
+    image.addEventListener('error', () => image.classList.add('photo-unavailable'), { once: true });
+
+    const category = document.createElement('span');
+    category.className = 'category';
+    category.textContent = item.category;
+    const title = document.createElement('strong');
+    title.textContent = item.name;
+    const description = document.createElement('span');
+    description.className = 'description';
+    description.textContent = item.description;
+    const bottom = document.createElement('span');
+    bottom.className = 'dish-bottom';
+    const price = document.createElement('b');
+    price.textContent = money(item.price);
+    bottom.append(price);
+    card.append(image, category, title, description, bottom);
+    return card;
+  }));
+}
+
 // Turn the old table/order number field into an optional note for the kitchen.
 const oldNumberLabel = document.querySelector('#order-form input[name="number"]')?.closest('label');
 if (oldNumberLabel) {
@@ -93,36 +148,12 @@ function renderCart() {
   totalNode.textContent = money(total);
 }
 
-// Real food photos for the dishes.
-const foodPhotos = {
-  biryani: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=900&q=85',
-  fries: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85',
-  beefBurger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85',
-  chickenBurger: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=900&q=85',
-  strawberries: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=85',
-  shake: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=85',
-  cupcake: 'https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=900&q=85'
-};
-
-function photoForDish(dish) {
-  if (dish.classList.contains('biryani')) return foodPhotos.biryani;
-  if (dish.classList.contains('fries')) return foodPhotos.fries;
-  if (dish.classList.contains('shake')) return foodPhotos.shake;
-  if (dish.classList.contains('cupcake')) return foodPhotos.cupcake;
-  if (dish.dataset.item === 'Chicken burger') return foodPhotos.chickenBurger;
-  if (dish.dataset.item === 'Chocolate covered strawberry') return foodPhotos.strawberries;
-  return foodPhotos.beefBurger;
-}
-
-document.querySelectorAll('.food-photo').forEach((image) => {
-  const dish = image.closest('.dish');
-  if (dish) image.src = photoForDish(dish);
-  image.addEventListener('error', () => image.classList.add('photo-unavailable'), { once: true });
-});
-
-const heroPhotos = [foodPhotos.biryani, foodPhotos.fries, foodPhotos.beefBurger, foodPhotos.cupcake];
+const heroPhotos = [menuItems[6], menuItems[8], menuItems[14], menuItems[10]];
 document.querySelectorAll('.hero-art img').forEach((image, index) => {
-  if (heroPhotos[index]) image.src = heroPhotos[index];
+  const item = heroPhotos[index];
+  if (!item) return;
+  image.src = item.photo;
+  image.alt = item.name;
 });
 
 // Called by the focused dish picker after the customer confirms an item.
