@@ -1,13 +1,61 @@
 const SUPABASE_URL = 'https://gnscldexzkzpjyqygiaa.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_fUKWBw9Ck8geL4qqNhn3pw_EFTXc9XL';
-const money = (value) => `OMR ${Number(value).toFixed(3)}`;
+const money = (value) => `OMR ${Number(value || 0).toFixed(3)}`;
 const list = document.querySelector('#orders-list');
 const soundToggle = document.querySelector('#sound-toggle');
 let supabase;
 let soundEnabled = false;
 let seenIds = new Set();
 let refreshTimer;
-const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+// Keep the kitchen's menu and prices aligned with the customer-facing menu.
+const menuItems = [
+  { name: 'Popcorn', price: 0.100, category: 'Snacks', image: 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Dabeli', price: 0.200, category: 'Veg · Street food', image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Brownies', price: 0.200, category: 'Desserts', image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Soft drinks', price: 0.300, category: 'Drinks', image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Mojito', price: 0.300, category: 'Drinks', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Ice cream', price: 0.200, category: 'Desserts', image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Samosa', price: 0.100, category: 'Veg · Snacks', image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Water bottle', price: 0.100, category: 'Drinks', image: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=480&q=80' },
+  { name: 'French fries', price: 0.150, category: 'Veg · Snacks', image: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Cookies', price: 0.100, category: 'Desserts', image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Chocolate cake', price: 0.250, category: 'Desserts', image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Sipups', price: 0.050, category: 'Drinks', image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Chai', price: 0.100, category: 'Drinks', image: 'https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Chicken wrap', price: 0.300, category: 'Chicken', image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=480&q=80' },
+  { name: 'Burger', price: 0.300, category: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=480&q=80' }
+];
+
+function addMenuPanel() {
+  const main = document.querySelector('main.waiter, .waiter');
+  if (!main || document.querySelector('#waiter-menu-panel')) return;
+  const style = document.createElement('style');
+  style.textContent = `
+    #waiter-menu-panel { margin:22px 0 30px; padding:22px; background:#171b22; color:#f7f2e9; border:1px solid #343943; border-radius:14px; }
+    #waiter-menu-panel h2 { margin:0 0 5px; color:#fff8ed; }
+    #waiter-menu-panel .menu-caption { margin:0 0 16px; color:#b7b0a5; }
+    .waiter-menu-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+    .waiter-menu-item { overflow:hidden; background:#202630; border:1px solid #343943; border-radius:10px; }
+    .waiter-menu-item img { display:block; width:100%; height:96px; object-fit:cover; background:#343943; }
+    .waiter-menu-item-copy { padding:9px 10px 11px; }
+    .waiter-menu-item small { display:block; margin-bottom:4px; color:#e5a944; text-transform:uppercase; letter-spacing:.06em; font-size:.65rem; }
+    .waiter-menu-item b { display:block; color:#fff8ed; }
+    .waiter-menu-item span { display:block; margin-top:4px; color:#f0b64f; font-weight:700; font-size:.87rem; }
+    .order-items { margin:12px 0; padding:0; list-style:none; }
+    .order-items li { display:flex; justify-content:space-between; gap:12px; padding:5px 0; border-bottom:1px solid #343943; }
+    @media(max-width:600px) { #waiter-menu-panel { padding:15px; } .waiter-menu-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; } .waiter-menu-item img { height:82px; } }
+  `;
+  document.head.append(style);
+  const panel = document.createElement('section');
+  panel.id = 'waiter-menu-panel';
+  panel.setAttribute('aria-labelledby', 'waiter-menu-title');
+  panel.innerHTML = `<h2 id="waiter-menu-title">Current menu &amp; prices</h2><p class="menu-caption">Kitchen reference · prices in OMR (three decimals; 0.100 OMR = 100 baiza)</p><div class="waiter-menu-grid">${menuItems.map((item) => `<article class="waiter-menu-item"><img src="${item.image}" alt="${escapeHTML(item.name)}" loading="lazy"><div class="waiter-menu-item-copy"><small>${escapeHTML(item.category)}</small><b>${escapeHTML(item.name)}</b><span>${money(item.price)}</span></div></article>`).join('')}</div>`;
+  const orderList = main.querySelector('#orders-list');
+  if (orderList) main.insertBefore(panel, orderList);
+  else main.prepend(panel);
+}
 
 function showLogin(message = '') {
   let panel = document.querySelector('#waiter-login-panel');
@@ -17,8 +65,8 @@ function showLogin(message = '') {
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-labelledby', 'waiter-login-title');
-    panel.style.cssText = 'position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:#283b31dd;';
-    panel.innerHTML = '<form id="waiter-login-form" style="width:min(100%,390px);padding:28px;background:#fffefa;border-radius:8px;box-shadow:0 20px 60px #0003"><p style="margin:0 0 8px;color:#778171;font-size:11px;font-weight:700;letter-spacing:1px">JUNIPER · STAFF ONLY</p><h2 id="waiter-login-title" style="margin:0 0 18px;font:500 32px Georgia,serif;color:#283b31">Waiter sign in</h2><label style="display:grid;gap:6px;margin:12px 0;color:#283b31;font-size:13px">Email<input name="email" type="email" autocomplete="username" required style="height:42px;padding:8px;border:1px solid #d5d9cd"></label><label style="display:grid;gap:6px;margin:12px 0;color:#283b31;font-size:13px">Password<input name="password" type="password" autocomplete="current-password" required style="height:42px;padding:8px;border:1px solid #d5d9cd"></label><p id="waiter-login-message" role="alert" style="min-height:20px;color:#9b392f;font-size:12px"></p><button class="button" type="submit" style="width:100%">Sign in to orders</button><p style="margin:14px 0 0;color:#788276;font-size:11px;line-height:1.6">Use the waiter account created for this Supabase project. Customer orders are not shown until you sign in.</p></form>';
+    panel.style.cssText = 'position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:#11151bdd;';
+    panel.innerHTML = '<form id="waiter-login-form" style="width:min(100%,390px);padding:28px;background:#1b2028;color:#f7f2e9;border:1px solid #454b55;border-radius:12px;box-shadow:0 20px 60px #0008"><p style="margin:0 0 8px;color:#e5a944;font-weight:700">SECURE STAFF ACCESS</p><h2 id="waiter-login-title" style="margin:0 0 16px">Waiter sign in</h2><label style="display:block;margin:10px 0">Email<input name="email" type="email" required autocomplete="username" style="display:block;width:100%;padding:11px;margin-top:5px"></label><label style="display:block;margin:10px 0">Password<input name="password" type="password" required autocomplete="current-password" style="display:block;width:100%;padding:11px;margin-top:5px"></label><p id="waiter-login-message" role="status"></p><button type="submit" style="padding:12px 16px;background:#e5a944;color:#17191d;border:0;border-radius:6px;font-weight:700">Sign in to orders</button></form>';
     document.body.append(panel);
     panel.querySelector('#waiter-login-form').addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -61,7 +109,12 @@ function render(orders) {
     list.innerHTML = '<div class="empty"><span>✳</span><h3>No orders yet</h3><p>New customer orders will appear here.</p><a href="index.html#menu">Open customer menu ↗</a></div>';
     return;
   }
-  list.innerHTML = orders.map((order) => `<article class="order-card"><div class="card-head"><span class="badge ${escapeHTML(order.status)}">${escapeHTML(order.status)}</span><time>${new Date(order.created_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</time></div><h3>${escapeHTML(order.customer_name)}</h3><p class="order-number">Table / order <b>${escapeHTML(order.order_number)}</b></p><ul>${(order.items || []).map((item) => `<li><span><b>${Number(item.quantity)}×</b> ${escapeHTML(item.name)}</span><strong>${money(Number(item.price) * Number(item.quantity))}</strong></li>`).join('')}</ul><div class="card-foot"><strong>${money(order.total)}</strong><label>Status <select data-id="${escapeHTML(order.id)}" aria-label="Update status for ${escapeHTML(order.order_number)}">${['waiting', 'preparing', 'ready'].map((status) => `<option value="${status}" ${order.status === status ? 'selected' : ''}>${status[0].toUpperCase()}${status.slice(1)}</option>`).join('')}</select></label></div></article>`).join('');
+  list.innerHTML = orders.map((order) => {
+    const items = Array.isArray(order.items) ? order.items : [];
+    const itemRows = items.map((item) => `<li><span>${escapeHTML(item.quantity)} × ${escapeHTML(item.name)}</span><strong>${money(Number(item.price) * Number(item.quantity))}</strong></li>`).join('');
+    const remark = order.kitchen_remark ? `<p class="kitchen-remark"><b>Kitchen / waiter note</b>${escapeHTML(order.kitchen_remark)}</p>` : '';
+    return `<article class="order-card"><div class="card-head"><span class="badge ${escapeHTML(order.status)}">${escapeHTML(order.status)}</span><time>${new Date(order.created_at).toLocaleString()}</time></div><h3>${escapeHTML(order.customer_name || 'Customer')}</h3><p class="order-number">Order ${escapeHTML(order.order_number ?? '')}</p>${remark}<ul class="order-items">${itemRows}</ul><p class="order-total"><b>Total</b><strong>${money(order.total)}</strong></p><label>Update status<select data-id="${escapeHTML(order.id)}"><option value="waiting" ${order.status === 'waiting' ? 'selected' : ''}>Waiting</option><option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option><option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option></select></label></article>`;
+  }).join('');
   list.querySelectorAll('select').forEach((select) => select.addEventListener('change', async () => {
     select.disabled = true;
     const { error } = await supabase.from('orders').update({ status: select.value }).eq('id', select.dataset.id);
@@ -75,7 +128,7 @@ async function loadOrders() {
   if (!supabase) return;
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) { showLogin(); return; }
-  const { data, error } = await supabase.from('orders').select('id,customer_name,order_number,items,total,currency,status,created_at').order('created_at', { ascending: false }).limit(100);
+  const { data, error } = await supabase.from('orders').select('id,customer_name,order_number,items,total,currency,status,created_at,kitchen_remark').order('created_at', { ascending: false }).limit(100);
   if (error) {
     console.error('Could not load orders:', error);
     showLogin('Could not load orders. Check the Supabase table and access policies.');
@@ -86,6 +139,7 @@ async function loadOrders() {
 }
 
 async function start() {
+  addMenuPanel();
   showLogin('Connecting to the secure order dashboard…');
   try {
     const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
