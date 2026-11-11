@@ -16,8 +16,8 @@ const menuItems = [
   { name: 'Dabeli', price: 0.200, category: 'VEG · INDIAN STREET FOOD', description: 'A spicy-sweet potato filling in a toasted bun.', photo: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=900&q=85', className: 'dabeli' },
   { name: 'Brownies', price: 0.200, category: 'DESSERTS', description: 'Rich, fudgy chocolate brownie.', photo: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=85', className: 'brownies' },
   { name: 'Soft drinks', price: 0.150, category: 'DRINKS', description: 'A chilled soft drink to go with your meal.', photo: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=900&q=85', className: 'soft-drinks' },
-  { name: 'Mojito', price: 0.300, category: 'DRINKS', description: 'A refreshing mint and lime cooler.', photo: 'https://images.unsplash.com/photo-1513558161293-cdaf765edfd7?auto=format&fit=crop&w=900&q=85', className: 'mojito' },
-  { name: 'Ice cream', price: 0.200, category: 'DESSERTS', description: 'A cool, creamy scoop of ice cream.', photo: 'https://images.unsplash.com/photo-1501446529957-6226bd447c46?auto=format&fit=crop&w=900&q=85', className: 'ice-cream' },
+  { name: 'Mojito', price: 0.300, category: 'DRINKS', description: 'A refreshing mint and lime cooler.', photo: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=900&q=85', className: 'mojito' },
+  { name: 'Ice cream', price: 0.200, category: 'DESSERTS', description: 'A cool, creamy scoop of ice cream.', photo: 'https://images.unsplash.com/photo-1570197788417-0e823ef4bfee?auto=format&fit=crop&w=900&q=85', className: 'ice-cream' },
   { name: 'Samosa', price: 0.100, category: 'VEG · SNACKS', description: 'Golden pastry filled with spiced vegetables.', photo: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=85', className: 'samosa' },
   { name: 'Water bottle', price: 0.100, category: 'DRINKS', description: 'A bottle of refreshing water.', photo: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=900&q=85', className: 'water' },
   { name: 'French fries', price: 0.150, category: 'VEG · SNACKS', description: 'Crispy golden fries, a timeless favorite.', photo: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85', className: 'fries' },
@@ -29,7 +29,7 @@ const menuItems = [
   { name: 'Burger', price: 0.300, category: 'BURGERS', description: 'A satisfying burger with fresh, tasty layers.', photo: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85', className: 'burger' }
 ];
 
-// Replace the starter dishes so the menu and the detail picker share the same items.
+// Render all menu cards from this list, including a spoken response for every item.
 const menuGrid = document.querySelector('#menu-grid');
 if (menuGrid) {
   menuGrid.replaceChildren(...menuItems.map((item) => {
@@ -38,7 +38,7 @@ if (menuGrid) {
     card.type = 'button';
     card.dataset.item = item.name;
     card.dataset.price = item.price.toFixed(3);
-    card.dataset.message = `${item.name}, great choice. I've added it to your order.`;
+    card.dataset.message = `${item.name}. ${item.description} Great choice, I've added it to your order.`;
 
     const image = document.createElement('img');
     image.className = 'food-photo';
