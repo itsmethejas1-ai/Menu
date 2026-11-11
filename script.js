@@ -17,7 +17,7 @@ const menuItems = [
   { name: 'Brownies', price: 0.200, category: 'DESSERTS', description: 'Rich, fudgy chocolate brownie.', photo: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=85', className: 'brownies' },
   { name: 'Soft drinks', price: 0.150, category: 'DRINKS', description: 'A chilled soft drink to go with your meal.', photo: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=900&q=85', className: 'soft-drinks' },
   { name: 'Mojito', price: 0.300, category: 'DRINKS', description: 'A refreshing mint and lime cooler.', photo: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=900&q=85', className: 'mojito' },
-  { name: 'Ice cream', price: 0.200, category: 'DESSERTS', description: 'A cool, creamy scoop of ice cream.', photo: 'https://images.unsplash.com/photo-1570197788417-0e823ef4bfee?auto=format&fit=crop&w=900&q=85', className: 'ice-cream' },
+  { name: 'Ice cream', price: 0.200, category: 'DESSERTS', description: 'A cool, creamy scoop of ice cream.', photo: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=85', className: 'ice-cream' },
   { name: 'Samosa', price: 0.100, category: 'VEG · SNACKS', description: 'Golden pastry filled with spiced vegetables.', photo: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=85', className: 'samosa' },
   { name: 'Water bottle', price: 0.100, category: 'DRINKS', description: 'A bottle of refreshing water.', photo: 'https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=900&q=85', className: 'water' },
   { name: 'French fries', price: 0.150, category: 'VEG · SNACKS', description: 'Crispy golden fries, a timeless favorite.', photo: 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=900&q=85', className: 'fries' },
@@ -65,7 +65,6 @@ if (menuGrid) {
   }));
 }
 
-// Turn the old table/order number field into an optional note for the kitchen.
 const oldNumberLabel = document.querySelector('#order-form input[name="number"]')?.closest('label');
 if (oldNumberLabel) {
   const remarkLabel = document.createElement('label');
@@ -156,7 +155,6 @@ document.querySelectorAll('.hero-art img').forEach((image, index) => {
   image.alt = item.name;
 });
 
-// Called by the focused dish picker after the customer confirms an item.
 window.addMenuDishToOrder = (card) => {
   const name = card.dataset.item;
   const item = cart.get(name) || { price: Number(card.dataset.price), quantity: 0 };
@@ -169,7 +167,6 @@ window.addMenuDishToOrder = (card) => {
   speak(card.dataset.message);
 };
 
-// Clicking a dish opens its large detail view. Selection is confirmed inside the picker.
 document.querySelectorAll('.dish').forEach((card) => card.setAttribute('aria-haspopup', 'dialog'));
 
 document.querySelector('#order-form').addEventListener('submit', async (event) => {
