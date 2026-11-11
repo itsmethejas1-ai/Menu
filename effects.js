@@ -52,7 +52,6 @@
   const addButton = dialog.querySelector('.dish-detail-add');
   const dishCount = () => dishCards.length;
   let currentIndex = 0;
-  let lastAddedIndex = -1;
 
   function showDish(index, animate = false) {
     if (!dishCards.length) return;
@@ -83,7 +82,6 @@
     const card = dishCards[currentIndex];
     if (!card || typeof window.addMenuDishToOrder !== 'function') return;
     window.addMenuDishToOrder(card);
-    lastAddedIndex = currentIndex;
     detailProgress.textContent = `Added ${card.dataset.item}. Select another dish or finish to review your order.`;
     addButton.textContent = 'Added ✓';
     addButton.disabled = true;
@@ -94,6 +92,7 @@
     }
   });
   dialog.querySelector('.dish-detail-finish').addEventListener('click', () => {
+    if (typeof window.announceMenuSelection === 'function') window.announceMenuSelection();
     dialog.close();
     document.querySelector('#order')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     window.setTimeout(() => document.querySelector('#order-form input[name="name"]')?.focus({ preventScroll: true }), reduceMotion ? 0 : 650);
@@ -102,7 +101,6 @@
   dialog.addEventListener('close', () => dialog.classList.remove('dish-detail-switching'));
 
   dishCards.forEach((card, index) => card.addEventListener('click', () => {
-    lastAddedIndex = -1;
     showDish(index);
     if (!dialog.open) dialog.showModal();
   }));
